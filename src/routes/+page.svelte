@@ -10,8 +10,8 @@
       </h1>
       
       <!-- New div for paragraph text -->
-      <div class="absolute right-[15%] top-1/2 text-left w-[600px]">
-        <p class="text-lg">
+      <div class="absolute right-[15%] top-[55%] text-left w-[40%]">
+        <p class="text-lg text-[#979797]">
           The Student Council is a vital part of our academic community, serving as a bridge between students and the administration. 
           Comprising elected representatives, the council embodies the interests and concerns of the student body. 
           Their main mission is to promote a positive school environment and foster school spirit.
