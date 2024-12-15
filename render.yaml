@@ -1,11 +1,7 @@
 services:
   - type: web
-    name: website-famnit
-    env: node
-    plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run preview
+    name: Website-Famnit
     runtime: static
-    envVars:
-      - key: NODE_ENV
-        value: production
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    autoDeploy: false
