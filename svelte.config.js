@@ -12,7 +12,7 @@ const config = {
 			fallback: 'index.html', // Add this line to handle client-side routing
 		}),
 		prerender: {
-			default: true, // Pre-render all pages by default
+			entries: ['*'], // Pre-render all pages; replace '*' with specific routes if needed
 		  },
 	},
 	preprocess: vitePreprocess({
