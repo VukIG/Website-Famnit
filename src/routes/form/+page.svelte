@@ -83,7 +83,7 @@
     selectedForm = selectedForm === formId ? null : formId; // Toggle the form
   }
 
-  //User for testing purposes!!!
+  //Used for testing purposes!!!
   //TODO: implement real logic of submitting the form (probably to the backend)
   function submitForm() {
   if (!selectedForm) return;
@@ -147,7 +147,7 @@
             </label>
           {/each}
           <button
-           type="submit" 
+           type="button" 
            class="bg-[#004AAC] text-white font-semibold py-2 px-4 mt-5 rounded float-right"
            on:click={submitForm}
            >
