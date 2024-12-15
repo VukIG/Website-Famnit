@@ -8,7 +8,8 @@ const config = {
 	// for more information about preprocessors
 	kit: {
 		adapter: adapter({
-			strict:false
+			strict:false,
+			fallback: 'index.html', // Add this line to handle client-side routing
 		}),
 	},
 	preprocess: vitePreprocess({
