@@ -5,7 +5,7 @@ services:
     plan: free
     buildCommand: npm install && npm run build
     startCommand: npm run preview
-    runtime: node 18
+    runtime: node 22
     envVars:
       - key: NODE_ENV
         value: production
