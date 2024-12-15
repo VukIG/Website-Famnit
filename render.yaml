@@ -1,0 +1,14 @@
+# render.yaml
+services:
+  - type: web
+    name: website-famnit
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run preview
+    runtime: node 20
+    disk:
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
