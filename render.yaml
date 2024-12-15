@@ -2,7 +2,7 @@ services:
   - type: web
     name: Website-Famnit
     runtime: Node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     startCommand: node build/index.js
     staticPublishPath: build
     autoDeploy: false
