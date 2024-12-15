@@ -11,6 +11,9 @@ const config = {
 			strict:false,
 			fallback: 'index.html', // Add this line to handle client-side routing
 		}),
+		prerender: {
+			default: true, // Pre-render all pages by default
+		  },
 	},
 	preprocess: vitePreprocess({
 		postcss: true,
