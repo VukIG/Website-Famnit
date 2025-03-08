@@ -10,6 +10,13 @@
 		"sourceMap": true,
 		"strict": true,
 		"module": "NodeNext",
-		"moduleResolution": "NodeNext"
-	}
+		"moduleResolution": "NodeNext",
+		"outDir": "./dist",
+		"allowImportingTsExtensions": true
+	},
+	"exclude": [
+		"eslint.config.js",
+		"postcss.config.js",
+		"svelte.config.js"
+	]
 }
