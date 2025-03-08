@@ -1,5 +1,6 @@
 
 <script lang="ts">
+  import '../../app.css';
     export const data: Record<string, unknown> = {}; // Replace with the actual type for page data if available.
   </script>
   

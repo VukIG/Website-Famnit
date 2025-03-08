@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { get } from "svelte/store";
+  import { username } from "$lib/auth.ts";
+  import { submissions } from '$lib/stores.ts';
+
   // Define the button array
   interface ButtonState {
     label: string;
@@ -14,34 +18,15 @@
   }
 
   // Create a Map for form configurations
-  const formMap = new Map<string, { title: string; fields: FormField[] }>([
+  const formMap = new Map<string, { title: string; description: string; fields: FormField[] }>([
     [
-      "studyIssues",
+      "Issues",
       {
-        title: "Form for Studying Issues",
+        title: "Form for Issues",
+        description: "On this form, you can submit a request regarding problems on campus, with a professor/subject or administrative issues",
         fields: [
-          { id: "studyType", label: "Choose Type:", type: "select", options: ["Option 1", "Option 2", "Option 3", "Option 4"] },
-          { id: "studyDescription" ,label: "Brief Description:", type: "text", placeholder: "Enter description..." }
-        ]
-      }
-    ],
-    [
-      "financialSupport",
-      {
-        title: "Form for Financial Support",
-        fields: [
-          {id: "financialType" ,label: "Choose Type:", type: "select", options: ["Option 1", "Option 2", "Option 3", "Option 4"] },
-          {id: "financialDescription" ,label: "Brief Description:", type: "text", placeholder: "Enter description..." }
-        ]
-      }
-    ],
-    [
-      "nonFinancialSupport",
-      {
-        title: "Form for Non-Financial Support",
-        fields: [
-          {id: "nonFinancialType" ,label: "Choose Type:", type: "select", options: ["Option 1", "Option 2", "Option 3", "Option 4"] },
-          {id: "nonFinancialDescription" ,label: "Brief Description:", type: "text", placeholder: "Enter description..." }
+          { id: "studyType", label: "Choose Type:", type: "select", options: ["Issues on the campus", "Issues with professor / subject", "Issues with the faculty", "Other"] },
+          { id: "studyDescription", label: "Description:", type: "text", placeholder: "Enter description..." }
         ]
       }
     ],
@@ -49,30 +34,30 @@
       "feedback",
       {
         title: "Feedback Form",
+        description: "On this form, you can submit you opinion about the last event, or the work of teh Student Council of FAMNIT",
         fields: [
-          {id: "feedbackType" ,label: "Choose Type:", type: "select", options: ["Option 1", "Option 2", "Option 3", "Option 4"] },
-          {id: "feedbackDescription" ,label: "Brief Description:", type: "text", placeholder: "Enter description..." }
+          { id: "feedbackType", label: "Choose Type:", type: "select", options: ["Feedback on event", "Student Council Work"] },
+          { id: "feedbackDescription", label: "Description:", type: "text", placeholder: "Enter description..." }
         ]
       }
     ],
     [
-      "studentProjects",
+      "requests",
       {
-        title: "Form for Financing Students' Projects",
+        title: "Form for Student Requests",
+        description: "On this form, you can either apply for the Open Call, or suggest any idea you have",
         fields: [
-          {id: "projectType" ,label: "Choose Type:", type: "select", options: ["Option 1", "Option 2", "Option 3", "Option 4"] },
-          {id: "projectDescription" ,label: "Brief Description:", type: "text", placeholder: "Enter description..." }
+          { id: "projectType", label: "Choose Type:", type: "select", options: ["Apply for the Open Call", "Idea for an Event", "Random Idea"] },
+          { id: "projectDescription", label: "Description:", type: "text", placeholder: "Enter description..." }
         ]
       }
     ]
   ]);
 
   let buttons: ButtonState[] = [
-    { label: "Studying issues", formId: "studyIssues" },
-    { label: "Financial support", formId: "financialSupport" },
-    { label: "Non-financial support", formId: "nonFinancialSupport" },
+    { label: "Issues", formId: "Issues" },
     { label: "Feedback", formId: "feedback" },
-    { label: "Financing students' projects", formId: "studentProjects" }
+    { label: "Request", formId: "requests" }
   ];
 
   let FormData: { [key: string]: any } = {};
@@ -83,18 +68,27 @@
     selectedForm = selectedForm === formId ? null : formId; // Toggle the form
   }
 
-  //Used for testing purposes!!!
-  //TODO: implement real logic of submitting the form (probably to the backend)
+  // Used for testing purposes!!!
+  // TODO: implement real logic of submitting the form (probably to the backend)
   function submitForm() {
-  if (!selectedForm) return;
+    if (!selectedForm) return;
 
-  console.log("Submitting form:", selectedForm);
-  console.log("Form data:", FormData);
+    const formName = buttons.find((btn) => btn.formId === selectedForm)?.label || selectedForm;
+    const textField = formMap.get(selectedForm)?.fields.find((f) => f.type === "text");
+    const description = textField && textField.id ? FormData[textField.id] || 'No description' : 'No description';
+    const selectField: FormField | undefined = formMap.get(selectedForm)?.fields.find((f) => f.type === "select");
+    const selectedOption = selectField && selectField.id ? FormData[selectField.id] || 'No option selected' : 'No option selected';
 
-  // Simulate clearing the formData after submission
-  FormData = {};
-}
+    submissions.update((current) => [
+      ...current,
+      { username: $username || 'anonymous', formName, description, selectedOption }
+    ]);
 
+    console.log("Submitting form:", selectedForm);
+    console.log("Form data:", FormData);
+
+    FormData = {};
+  }
 </script>
 
 <div class="w-[100vw] h-[100vh] bg-[#191919] flex flex-col items-center">
@@ -119,15 +113,18 @@
 
   {#if selectedForm}
     {#if formMap.has(selectedForm)}
-      <div class="w-[70%] h-[50%] bg-[#191919] border border-gray-200 p-10 rounded-3xl mt-10">
+      <div class="w-[70%] h-auto bg-[#191919] border border-gray-200 p-10 rounded-3xl mt-10 flex flex-col justify-between">
         <form>
           <h2 class="text-white text-2xl">{formMap.get(selectedForm)?.title}</h2>
+          <br />
+          <p class="text-white text-xl">{formMap.get(selectedForm)?.description}</p>
+          <br />
           {#each formMap.get(selectedForm)?.fields ?? [] as field}
             <label>
               {field.label}
               {#if field.type === "select"}
                 <select
-                  bind:value={FormData[field.id]} 
+                  bind:value={FormData[field.id]}
                   class="w-1/4 p-2 mb-3 mt-3 bg-[#191919] border border-gray-600 rounded-full text-white"
                 >
                   {#each field.options ?? [] as option}
@@ -135,7 +132,7 @@
                   {/each}
                 </select>
               {/if}
-              <br>
+              <br />
               {#if field.type === "text"}
                 <input
                   type="text"
@@ -146,14 +143,16 @@
               {/if}
             </label>
           {/each}
+        </form>
+        <div class="flex justify-end">
           <button
-           type="button" 
-           class="bg-[#004AAC] text-white font-semibold py-2 px-4 mt-5 rounded float-right"
-           on:click={submitForm}
-           >
+            type="button"
+            class="bg-[#004AAC] text-white font-semibold py-2 px-4 mt-5 rounded"
+            on:click={submitForm}
+          >
             Submit
           </button>
-        </form>
+        </div>
       </div>
     {/if}
   {/if}
